@@ -1,0 +1,633 @@
+/* =========================================
+   VARIABLES & THEME CONFIGURATION
+   ========================================= */
+:root {
+  /* Wali Jaya Brand Colors */
+  --wj-green: #27a844;
+  --wj-green-dark: #1e8535;
+  --wj-green-light: #45c461;
+  
+  /* Shared values */
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --container: 1120px;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* Global Transitions for smooth Dark/Light toggle */
+  --theme-transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Light Theme (Default/Auto) */
+:root,
+:root[data-theme="auto"],
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg-color: #f8fbf9;
+  --text-main: #1a201c;
+  --text-muted: #5c6e61;
+  
+  /* Liquid Glass - Light Mode */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-shadow: 0 8px 32px rgba(39, 168, 68, 0.04);
+  
+  /* Accents */
+  --accent: var(--wj-green);
+  --accent-hover: var(--wj-green-dark);
+  
+  /* Ambient Blobs */
+  --blob-1: rgba(39, 168, 68, 0.15);
+  --blob-2: rgba(69, 196, 97, 0.15);
+  --blob-3: rgba(212, 237, 218, 0.4);
+}
+
+/* Dark Theme */
+@media (prefers-color-scheme: dark) {
+  :root,
+  :root[data-theme="auto"] {
+    color-scheme: dark;
+    --bg-color: #0b110d;
+    --text-main: #f0f4f1;
+    --text-muted: #a1b0a5;
+    
+    /* Liquid Glass - Dark Mode */
+    --glass-bg: rgba(20, 28, 22, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.06);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    
+    /* Accents */
+    --accent: var(--wj-green-light);
+    --accent-hover: var(--wj-green);
+    
+    /* Ambient Blobs */
+    --blob-1: rgba(39, 168, 68, 0.12);
+    --blob-2: rgba(30, 133, 53, 0.08);
+    --blob-3: rgba(11, 17, 13, 0);
+  }
+}
+
+/* Forced Dark Theme Override */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-color: #0b110d;
+  --text-main: #f0f4f1;
+  --text-muted: #a1b0a5;
+  --glass-bg: rgba(20, 28, 22, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --accent: var(--wj-green-light);
+  --accent-hover: var(--wj-green);
+  --blob-1: rgba(39, 168, 68, 0.12);
+  --blob-2: rgba(30, 133, 53, 0.08);
+  --blob-3: rgba(11, 17, 13, 0);
+}
+
+/* =========================================
+   BASE RESET & TYPOGRAPHY
+   ========================================= */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  transition: var(--theme-transition);
+  overflow-x: hidden;
+}
+
+body.nav-open { overflow: hidden; }
+a { color: inherit; text-decoration: none; }
+button, input, textarea { font: inherit; outline: none; border: none; }
+
+svg {
+  width: 1.25rem; height: 1.25rem;
+  fill: none; stroke: currentColor;
+  stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8;
+}
+
+.container {
+  width: min(calc(100% - 40px), var(--container));
+  margin-inline: auto;
+}
+
+/* =========================================
+   PERFORMANCE LIQUID GLASS BACKGROUND
+   ========================================= */
+.liquid-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: var(--bg-color);
+  transition: background-color 0.4s ease;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  will-change: transform;
+  opacity: 0.8;
+}
+
+.blob-1 {
+  width: 50vw; height: 50vw;
+  background: var(--blob-1);
+  top: -10%; left: -10%;
+  animation: float-1 25s infinite ease-in-out alternate;
+  transition: background 0.4s ease;
+}
+
+.blob-2 {
+  width: 40vw; height: 40vw;
+  background: var(--blob-2);
+  bottom: -20%; right: -10%;
+  animation: float-2 20s infinite ease-in-out alternate;
+  transition: background 0.4s ease;
+}
+
+.blob-3 {
+  width: 30vw; height: 30vw;
+  background: var(--blob-3);
+  top: 40%; left: 40%;
+  animation: float-1 30s infinite ease-in-out alternate-reverse;
+  transition: background 0.4s ease;
+}
+
+@keyframes float-1 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(10%, 15%, 0) scale(1.1); }
+}
+
+@keyframes float-2 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(-15%, -10%, 0) scale(1.05); }
+}
+
+/* =========================================
+   GLASS PANEL COMPONENT (Minimalist)
+   ========================================= */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+  transition: var(--theme-transition), transform 0.25s ease;
+}
+
+/* =========================================
+   HEADER & NAVIGATION
+   ========================================= */
+.site-header {
+  position: fixed;
+  z-index: 50;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(calc(100% - 40px), var(--container));
+  padding: 10px 16px;
+  border-radius: 100px; /* Pill shape for minimalist look */
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  border-radius: 50%;
+}
+
+.brand-text {
+  object-fit: contain;
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+}
+
+.nav-links a {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: var(--accent);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-switch {
+  display: flex;
+  background: rgba(0,0,0,0.05);
+  border-radius: 100px;
+  padding: 4px;
+  border: 1px solid var(--glass-border);
+  transition: var(--theme-transition);
+}
+
+:root[data-theme="dark"] .theme-switch, 
+@media (prefers-color-scheme: dark) { :root[data-theme="auto"] .theme-switch { background: rgba(255,255,255,0.05); } }
+
+.theme-switch button {
+  background: transparent;
+  color: var(--text-muted);
+  width: 32px; height: 32px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-switch button[aria-pressed="true"] {
+  background: var(--bg-color);
+  color: var(--accent);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.menu-toggle {
+  display: none;
+  background: transparent;
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 8px;
+}
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(39, 168, 68, 0.3);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(39, 168, 68, 0.4);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--glass-border);
+}
+
+.btn-ghost:hover {
+  background: var(--glass-bg);
+  border-color: var(--accent);
+}
+
+/* =========================================
+   HERO SECTION
+   ========================================= */
+.hero {
+  padding: 160px 0 80px;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 60px;
+  align-items: center;
+}
+
+.hero-copy {
+  max-width: 600px;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+
+.hero-lead {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.hero-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  gap: 24px;
+}
+
+.panel-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.metric-label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* =========================================
+   SECTIONS & GRIDS
+   ========================================= */
+.section { padding: 100px 0; }
+
+.section-heading {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 60px;
+}
+
+.section-heading.compact { text-align: left; margin: 0 0 30px; }
+
+h2 {
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  line-height: 1.2;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.section-heading p { color: var(--text-muted); font-size: 1.1rem; }
+
+.card-grid, .pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.service-card, .pricing-card {
+  padding: 40px 32px;
+}
+
+.service-card:hover, .pricing-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+.card-icon {
+  width: 48px; height: 48px;
+  background: rgba(39, 168, 68, 0.1);
+  color: var(--accent);
+  border-radius: var(--radius-md);
+  display: grid; place-items: center;
+  margin-bottom: 24px;
+}
+
+h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; }
+
+.service-card p, .pricing-card p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.plan-tag {
+  display: inline-block;
+  padding: 6px 12px;
+  background: rgba(39, 168, 68, 0.1);
+  color: var(--accent);
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.pricing-card.is-featured {
+  border-color: var(--accent);
+  box-shadow: 0 12px 40px rgba(39, 168, 68, 0.15);
+}
+
+/* =========================================
+   PROCESS SECTION
+   ========================================= */
+.process-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.process-list {
+  list-style: none;
+  display: grid; gap: 20px;
+}
+
+.process-list li {
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.step-num {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--accent);
+  opacity: 0.5;
+}
+
+.process-list strong { font-size: 1.1rem; }
+.process-list p { color: var(--text-muted); font-size: 0.95rem; }
+
+/* =========================================
+   CONTACT SECTION
+   ========================================= */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+}
+
+.contact-points a {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 16px 24px;
+  font-weight: 600;
+  margin-top: 24px;
+  border-radius: 100px;
+}
+
+.contact-points a svg { color: var(--accent); }
+
+.quote-form {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.9rem; font-weight: 600;
+}
+
+.form-group input {
+  padding: 16px;
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(39, 168, 68, 0.15);
+}
+
+.form-submit { margin-top: 10px; width: 100%; }
+/* =========================================
+   BACKGROUND KHUSUS PER SECTION (PAGE)
+   ========================================= */
+
+/* PAGE 2: Section Layanan (Contoh Gradient Halus) */
+#layanan {
+  /* Menggunakan gradient transparan agar efek liquid di belakang tetap mengintip sedikit */
+  background: linear-gradient(180deg, rgba(39, 168, 68, 0.08) 0%, transparent 100%);
+  
+  /* Memberi batas atas & bawah yang elegan */
+  border-top: 1px solid var(--glass-border);
+}
+
+/* PAGE 3: Section Paket (Contoh Background Gambar dengan Parallax) */
+#paket {
+  /* Ganti 'gambar-scaffolding.jpg' dengan nama file gambar Anda.
+     Linear-gradient digunakan sebagai overlay gelap agar teks tetap terbaca */
+  background: linear-gradient(rgba(11, 17, 13, 0.85), rgba(11, 17, 13, 0.85)), url('gambar-scaffolding.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Membuat efek Parallax (gambar diam saat discroll) */
+  
+  /* Memaksa teks menjadi putih karena background gelap */
+  color: #f0f4f1;
+}
+
+/* Penyesuaian teks khusus untuk area dengan background gambar gelap */
+#paket .section-heading p, 
+#paket .pricing-card p {
+  color: #a1b0a5; /* Warna teks sekunder agar tidak terlalu silau */
+}
+
+/* PAGE 4: Section Proses (Contoh Warna Solid Minimalis menyesuaikan Dark/Light Mode) */
+#proses {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* =========================================
+   FOOTER
+   ========================================= */
+.site-footer {
+  padding: 40px 0;
+  border-top: 1px solid var(--glass-border);
+  margin-top: 60px;
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.footer-inner p { font-weight: 600; color: var(--text-main); }
+
+/* =========================================
+   RESPONSIVE DESIGN (MOBILE)
+   ========================================= */
+@media (max-width: 992px) {
+  .hero-grid, .process-layout, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .hero { padding-top: 120px; min-height: auto; text-align: center; }
+  .hero-copy { margin: 0 auto; }
+  .hero-actions { justify-content: center; }
+  .hero-panel { flex-direction: row; justify-content: space-around; }
+  .section-heading.compact { text-align: center; margin: 0 auto 40px; }
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    position: fixed;
+    top: 80px; left: 20px; right: 20px;
+    flex-direction: column;
+    background: var(--bg-color);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    transform: translateY(-20px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  body.nav-open .nav-links {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .menu-toggle { display: block; }
+  
+  .brand-text { display: none; } /* Hanya tampilkan logo 3D di HP agar bersih */
+  
+  .hero-panel { flex-direction: column; align-items: center; text-align: center; }
+  .quote-form { padding: 24px; }
+  .footer-inner { flex-direction: column; gap: 10px; text-align: center; }
+}
